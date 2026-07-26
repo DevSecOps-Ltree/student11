@@ -91,7 +91,7 @@ def search():
                 output += f'<li>Username: {row[0]}, Email: {row[1]}</li>'
             output += '</ul>'
         except Exception as e:
-            output = f'<p>Error: {str(e)}</p>'
+            output = f'<p>Error: An unexpected error occurred. Please try again later.</p>'
 
         return f'''
         <html>
