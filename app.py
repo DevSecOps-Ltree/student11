@@ -11,6 +11,7 @@ import os
 import pickle
 import base64
 import hashlib
+import subprocess
 
 app = Flask(__name__)
 
@@ -168,8 +169,12 @@ def ping():
     host = request.args.get('host', '')
 
     if host:
-        # VULNERABLE: Unsanitized input to shell command
-        result = os.popen(f'ping -c 3 {host}').read()
+        # FIXED: Use subprocess with a list to avoid shell injection
+        try:
+            result = subprocess.run(['ping', '-c', '3', host], capture_output=True, text=True, check=True)
+            output = result.stdout
+        except subprocess.CalledProcessError as e:
+            output = f"Error: {e}"
         return f'''
         <html>
         <body>
@@ -179,7 +184,7 @@ def ping():
                 <input type="submit" value="Ping">
             </form>
             <h2>Result:</h2>
-            <pre>{result}</pre>
+            <pre>{output}</pre>
             <p><a href="/">Back</a></p>
         </body>
         </html>
